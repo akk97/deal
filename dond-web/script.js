@@ -10,6 +10,7 @@ const gameBoard = document.getElementById("gameBoard");
 const balanceDisplay = document.getElementById("balance");
 const resetBtn = document.getElementById("resetBtn");
 
+//logs each game to local storage
 let gameLog = {
   personalCaseNumber: null,
   personalCaseValue: null,
@@ -38,7 +39,7 @@ function showModal(title, message, buttons) {
     modalTitle.textContent = title;
     modalMessage.textContent = message;
 
-    // Clear previous buttons
+    // clear previous buttons
     modalButtons.innerHTML = "";
 
     buttons.forEach(text => {
@@ -55,7 +56,7 @@ function showModal(title, message, buttons) {
   });
 }
 
-// Shuffle helper function
+// shuffle helper function
 function shuffle(arr) {
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -63,7 +64,7 @@ function shuffle(arr) {
   }
 }
 
-// Initialize the game
+// start game
 function initGame() {
 
 gameLog = {
@@ -103,19 +104,19 @@ gameLog = {
 
 }
 
-// Update the balance display
+// update the balance display
 function updateBalanceDisplay() {
   balanceDisplay.textContent = `Balance: $${balance}`;
 }
 
-// Handle a box click
+// handle box click
 async function handleClick(btn) {
   const number = parseInt(btn.dataset.number);
   const index = shuffledNumbers.indexOf(number);
   const value = shuffledAmounts[index];
 
   if (clickCount === 0) {
-    // First pick: choose your personal case
+    // choose your personal case
     personalCaseNumber = number;
     personalCaseValue = value;
     gameLog.personalCaseNumber = number;
@@ -127,7 +128,7 @@ async function handleClick(btn) {
     btn.disabled = true;
     await showModal("Personal Case", `You picked case #${number} as your own.`, ["OK"]);
   } else {
-    // Open a case
+    // open a case
     btn.textContent = `$${value}`;
     btn.disabled = true;
     balance += value;
@@ -137,12 +138,12 @@ async function handleClick(btn) {
     gameLog.openedCases.push({ caseNumber: number, caseValue: value });
 
 
-    // After opening cases, check if it's time for bank offer
+    // bank offer after each round
     if ([4, 7, 10, 12, 14].includes(clickCount)) {
       await bankOffer();
     }
 
-    // Final choice after last case opened
+    // final choice between personal and last case on board
     if (clickCount === 14) {
       await finalChoice();
     }
@@ -176,7 +177,7 @@ async function bankOffer() {
   }
 }
 
-// Reveal all unopened cases and disable buttons 
+// reveal all unopened cases and disable buttons 
 function revealAllCases() {
   const buttons = gameBoard.querySelectorAll("button");
   buttons.forEach((btn) => {
@@ -189,7 +190,7 @@ function revealAllCases() {
   });
 }
 
-// Final choice: keep your case or swap with the last unopened case
+// keep your case or swap with the last unopened case
 async function finalChoice() {
   // Find last unopened case number and value
   let lastCaseNumber = null;
